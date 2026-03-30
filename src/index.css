@@ -1,0 +1,114 @@
+:root {
+  /* Design Tokens from DESIGN.md */
+  --primary: #BDC2FF;
+  --primary-rgb: 189, 194, 255;
+  --primary-container: #1A237E;
+  --on-primary: #1B247F;
+  --secondary: #44DDC1;
+  --on-secondary: #00382F;
+  --secondary-container: #00BEA4;
+  --tertiary: #FFB59D;
+  --tertiary-container: #5C1800;
+  --background: #121414;
+  --surface: #121414;
+  --surface-container-low: #161818;
+  --surface-container: #222424;
+  --surface-container-high: #2D2F2F;
+  --on-surface: #E2E2E2;
+  --on-surface-variant: #C6C5D4;
+  --outline: #908F9D;
+  --outline-variant: rgba(144, 143, 157, 0.4);
+
+  --font-display: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --rounded-md: 0.75rem;
+  --rounded-full: 9999px;
+
+  --spacing-4: 1rem;
+  --spacing-5: 1.1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 1.75rem;
+
+  color: var(--on-surface);
+  background-color: var(--background);
+  font-family: var(--font-body);
+}
+
+.app-container.light {
+  --primary: #5C6BC0;
+  --primary-rgb: 92, 107, 192;
+  --primary-container: #E8EAF6;
+  --on-primary: #FFFFFF;
+  --secondary: #26A69A;
+  --on-secondary: #FFFFFF;
+  --secondary-container: #E0F2F1;
+  --background: #F5F7FA;
+  --surface: #FFFFFF;
+  --surface-container-low: #F1F5F9;
+  --surface-container: #FFFFFF;
+  --surface-container-high: #E2E8F0;
+  --on-surface: #1E293B;
+  --on-surface-variant: #475569;
+  --outline: #64748B;
+  --outline-variant: rgba(100, 116, 139, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--background);
+  color: var(--on-surface);
+}
+
+h1, h2, h3, h4, .display-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: var(--surface-container);
+  opacity: 0.95;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+
+/* Hierarchy & Nesting */
+.card {
+  background-color: var(--surface-container);
+  border-radius: var(--rounded-md);
+  padding: var(--spacing-5);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.card:hover {
+  background-color: var(--surface-container-high);
+  transform: translateY(-4px);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-container-high);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--outline);
+}
