@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, TrendingUp, Save, Check, Moon, Sun, RefreshCw, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, Moon, Sun, RefreshCw, ChevronRight } from 'lucide-react';
 import { fetchLatestNews } from './services/newsService';
 import type { Article } from './services/newsService';
 import { processNewsWithAI, translateArticles } from './services/aiService';
@@ -11,10 +11,8 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState('전체');
   const [isDarkMode, setIsDarkMode] = useState(true);
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('gemini_api_key') || '');
-  const [showKeyInput, setShowKeyInput] = useState(false);
+  const [apiKey] = useState(() => localStorage.getItem('gemini_api_key') || '');
   const [activeView, setActiveView] = useState<'dashboard' | 'trends'>('dashboard');
-  const [isKeySaved, setIsKeySaved] = useState(false);
 
   const categories = ['전체', 'AI', 'AI(의료)', '반도체', '보안', '클라우드', '모바일', '스타트업'];
 
@@ -54,24 +52,9 @@ const App: React.FC = () => {
     loadNews();
   }, []);
 
-  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setApiKey(e.target.value);
-    setIsKeySaved(false);
-  };
-
-  const handleSaveApiKey = () => {
-    localStorage.setItem('gemini_api_key', apiKey);
-    setIsKeySaved(true);
-    setTimeout(() => setIsKeySaved(false), 3000);
-  };
 
   const handleAIProcess = async (id: string) => {
     // API 키가 없어도 로컬 분석 엔진으로 진행 가능하므로 경고 제거
-    // if (!apiKey) {
-    //   alert("먼저 Gemini API 키를 입력해 주세요.");
-    //   setShowKeyInput(true);
-    //   return;
-    // }
 
     const article = news.find(n => n.id === id);
     if (!article || article.summary) return;
@@ -131,34 +114,7 @@ const App: React.FC = () => {
             <TrendingUp size={20} />
             <span>트렌드 분석</span>
           </div>
-          <div className="nav-item" onClick={() => setShowKeyInput(!showKeyInput)}>
-            <Save size={20} />
-            <span>API 설정</span>
-          </div>
         </nav>
-
-        {showKeyInput && (
-          <div className="api-key-input-container">
-            <div className="api-input-wrapper">
-              <input 
-                type="password" 
-                placeholder="Gemini API 키 입력..." 
-                value={apiKey}
-                onChange={handleApiKeyChange}
-                className="api-key-input"
-              />
-              <button 
-                className={`api-save-btn ${isKeySaved ? 'saved' : ''}`}
-                onClick={handleSaveApiKey}
-                title="API 키 저장"
-              >
-                {isKeySaved ? <Check size={16} /> : <Save size={16} />}
-                <span>{isKeySaved ? '저장됨' : '저장'}</span>
-              </button>
-            </div>
-            <p className="api-hint">입력된 키는 브라우저 로컬 저장소에 저장됩니다.</p>
-          </div>
-        )}
 
         <div className="category-section">
           <h3>카테고리</h3>
