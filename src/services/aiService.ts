@@ -13,11 +13,8 @@ export const processNewsWithAI = async (
   const apiKey = userApiKey || import.meta.env.VITE_GEMINI_API_KEY;
 
   if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
-    return {
-      summary: "Gemini API 키가 설정되지 않았습니다. 사이드바에서 키를 입력해 주세요.",
-      category: "알림",
-      keywords: ["API_KEY_MISSING"]
-    };
+    console.log("Using Local Analysis Fallback...");
+    return localAnalyzeNews(article);
   }
 
   try {
@@ -108,5 +105,65 @@ export const translateArticles = async (
     console.error("Translation error:", error);
     return [];
   }
+};
+
+/**
+ * 로컬 규칙 기반 뉴스 분석 (No-API Fallback)
+ */
+const localAnalyzeNews = (article: { title: string; content: string }): AIAnalysis => {
+  const { title, content } = article;
+  const fullText = `${title} ${content}`;
+
+  // 1. 카테고리 결정 (newsService와 유사한 로직)
+  let category = "일반";
+  const categoryKeywords = {
+    "AI(의료)": ["의료", "병원", "진단", "신약", "수술", "헬스케어", "HealthTech", "정밀의료"],
+    "AI": ["AI", "인공지능", "LLM", "Deep Learning", "머신러닝", "ChatGPT", "Claude", "Gemini", "OpenAI"],
+    "반도체": ["반도체", "칩", "NVIDIA", "삼성전자", "SK하이닉스", "TSMC", "Intel", "GPU", "HBM"],
+    "보안": ["보안", "해킹", "사이버", "취약점", "랜섬웨어", "제로트러스트", "보안관제"],
+    "클라우드": ["클라우드", "AWS", "Azure", "GCP", "서버", "인프라", "SaaS", "PaaS"],
+    "모바일": ["스마트폰", "아이폰", "갤럭시", "안드로이드", "iOS", "통신", "5G", "6G"],
+    "스타트업": ["스타트업", "투자", "유니콘", "시리즈", "VC", "창업", "투자유치"]
+  };
+
+  for (const [cat, keywords] of Object.entries(categoryKeywords)) {
+    if (keywords.some(k => fullText.toLowerCase().includes(k.toLowerCase()))) {
+      category = cat;
+      break;
+    }
+  }
+
+  // 2. 요약 생성 (첫 2~3문장 추출)
+  const sentences = content.split(/[.!?]\s/).filter(s => s.trim().length > 10);
+  let summary = sentences.slice(0, 3).join(". ") + (sentences.length > 3 ? "..." : ".");
+  
+  if (summary.length < 20) {
+    summary = title;
+  }
+
+  // 3. 키워드 추출 (제목 및 본문에서 빈도수 높은 단어)
+  const commonKeywords = ["기능", "출시", "개발", "강화", "지원", "시스템", "기술", "서비스", "기업", "내년", "올해"];
+  const allWords = fullText.split(/\s+/);
+  const detectedKeywords = new Set<string>();
+  
+  // 카테고리 관련 키워드 우선 추가
+  if (categoryKeywords[category as keyof typeof categoryKeywords]) {
+    categoryKeywords[category as keyof typeof categoryKeywords].slice(0, 2).forEach(k => detectedKeywords.add(k));
+  }
+
+  // 일반 명사 추출 (간단히)
+  allWords.forEach(word => {
+    if (word.length >= 2 && !commonKeywords.includes(word)) {
+      if (detectedKeywords.size < 5 && Math.random() > 0.8) {
+        detectedKeywords.add(word.replace(/[.,!?]/g, ''));
+      }
+    }
+  });
+
+  return {
+    summary,
+    category,
+    keywords: Array.from(detectedKeywords).slice(0, 5)
+  };
 };
 

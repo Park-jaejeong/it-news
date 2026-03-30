@@ -66,11 +66,12 @@ const App: React.FC = () => {
   };
 
   const handleAIProcess = async (id: string) => {
-    if (!apiKey) {
-      alert("먼저 Gemini API 키를 입력해 주세요.");
-      setShowKeyInput(true);
-      return;
-    }
+    // API 키가 없어도 로컬 분석 엔진으로 진행 가능하므로 경고 제거
+    // if (!apiKey) {
+    //   alert("먼저 Gemini API 키를 입력해 주세요.");
+    //   setShowKeyInput(true);
+    //   return;
+    // }
 
     const article = news.find(n => n.id === id);
     if (!article || article.summary) return;
@@ -246,11 +247,11 @@ const App: React.FC = () => {
                         disabled={article.isLoadingAI}
                       >
                         {article.isLoadingAI ? (
-                          <><RefreshCw size={14} className="spinning" /> AI 분석 중...</>
+                          <><RefreshCw size={14} className="spinning" /> 분석 중...</>
                         ) : article.error ? (
                           <><RefreshCw size={14} /> 다시 시도</>
                         ) : (
-                          'Gemini AI로 요약'
+                          apiKey ? 'Gemini AI로 요약' : '로컬 엔진으로 요약'
                         )}
                       </button>
                       {article.error && (

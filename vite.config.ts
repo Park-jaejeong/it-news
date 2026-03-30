@@ -8,4 +8,9 @@ export default defineConfig({
     react(),
     nodePolyfills(),
   ],
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'esbuild',
+  },
 })
