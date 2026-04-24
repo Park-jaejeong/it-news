@@ -1,3 +1,5 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+
 :root {
   /* Design Tokens from DESIGN.md */
   --primary: #BDC2FF;
@@ -19,8 +21,8 @@
   --outline: #908F9D;
   --outline-variant: rgba(144, 143, 157, 0.4);
 
-  --font-display: 'Manrope', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-display: 'Pretendard', 'Manrope', sans-serif;
+  --font-body: 'Pretendard', 'Inter', sans-serif;
 
   --rounded-md: 0.75rem;
   --rounded-full: 9999px;
